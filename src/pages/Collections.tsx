@@ -1,5 +1,5 @@
-import React from 'react';
-import { Filter } from 'lucide-react';
+import React from "react";
+import { Filter } from "lucide-react";
 
 const collections = [
   {
@@ -10,17 +10,19 @@ const collections = [
         id: 101,
         name: "Chronograph Master",
         price: 12500,
-        image: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&q=80&w=800",
-        description: "Swiss-made automatic chronograph"
+        image:
+          "https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&q=80&w=800",
+        description: "Swiss-made automatic chronograph",
       },
       {
         id: 102,
         name: "Royal Oak Elite",
         price: 35000,
-        image: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&q=80&w=800",
-        description: "18k gold case with sapphire crystal"
-      }
-    ]
+        image:
+          "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&q=80&w=800",
+        description: "18k gold case with sapphire crystal",
+      },
+    ],
   },
   {
     id: 2,
@@ -30,17 +32,19 @@ const collections = [
         id: 201,
         name: "Nautilus Prime",
         price: 45000,
-        image: "https://images.unsplash.com/photo-1548171915-e79a380a2a4b?auto=format&fit=crop&q=80&w=800",
-        description: "Perpetual calendar complication"
+        image:
+          "https://images.unsplash.com/photo-1548171915-e79a380a2a4b?auto=format&fit=crop&q=80&w=800",
+        description: "Perpetual calendar complication",
       },
       {
         id: 202,
         name: "Grand Tourbillon",
         price: 85000,
-        image: "https://images.unsplash.com/photo-1639037687665-37ff6c49494c?auto=format&fit=crop&q=80&w=800",
-        description: "Flying tourbillon with moonphase"
-      }
-    ]
+        image:
+          "https://img.chrono24.com/images/uhren/38666043-93ql3j6crzpsesah9vvy4dmb-Zoom.jpg",
+        description: "Flying tourbillon with moonphase",
+      },
+    ],
   },
   {
     id: 3,
@@ -50,18 +54,20 @@ const collections = [
         id: 301,
         name: "Diver Pro",
         price: 8500,
-        image: "https://images.unsplash.com/photo-1623998021446-45cd9b269056?auto=format&fit=crop&q=80&w=800",
-        description: "Professional diving watch with 300m water resistance"
+        image:
+          "https://images.unsplash.com/photo-1623998021446-45cd9b269056?auto=format&fit=crop&q=80&w=800",
+        description: "Professional diving watch with 300m water resistance",
       },
       {
         id: 302,
         name: "Racing Chronograph",
         price: 15000,
-        image: "https://images.unsplash.com/photo-1622434641406-a158123450f9?auto=format&fit=crop&q=80&w=800",
-        description: "Precision racing chronograph with tachymeter"
-      }
-    ]
-  }
+        image:
+          "https://images.unsplash.com/photo-1622434641406-a158123450f9?auto=format&fit=crop&q=80&w=800",
+        description: "Precision racing chronograph with tachymeter",
+      },
+    ],
+  },
 ];
 
 export default function Collections() {
@@ -86,15 +92,19 @@ export default function Collections() {
                 {collection.watches.map((watch) => (
                   <div key={watch.id} className="group">
                     <div className="relative overflow-hidden mb-4">
-                      <img 
-                        src={watch.image} 
+                      <img
+                        src={watch.image}
                         alt={watch.name}
                         className="w-full h-80 object-cover transform group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute inset-0 bg-finesse-black/20 group-hover:bg-finesse-black/0 transition-colors"></div>
                     </div>
-                    <h3 className="font-playfair text-xl font-semibold mb-2">{watch.name}</h3>
-                    <p className="text-finesse-gray-400 font-raleway mb-3">{watch.description}</p>
+                    <h3 className="font-playfair text-xl font-semibold mb-2">
+                      {watch.name}
+                    </h3>
+                    <p className="text-finesse-gray-400 font-raleway mb-3">
+                      {watch.description}
+                    </p>
                     <div className="flex justify-between items-center">
                       <span className="text-finesse-gold font-playfair text-lg">
                         ${watch.price.toLocaleString()}
