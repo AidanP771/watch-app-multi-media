@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="stylesheet" href="styles/sales.css">
+    <link rel="stylesheet" href="styles/media.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FINESSE</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+
+    <section class="nav-section" role="navigation" aria-label="Main Navigation">
+        <div class="nav-bar">
+            <div class="nav-leftbar">
+                <h1>FINESSE</h1>
+            </div>
+            <div class="nav-rightbar">           
+                <ul role="menu">
+                    <li role="menuitem"><a href="index.html" aria-label="Go to Home Page">Home</a></li>
+                    <li role="menuitem"><a href="search.html" aria-label="Go to Search Page">Search</a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <hr>
+
+    <section class="sale-section" role="region" aria-labelledby="sale-catalogue">
+        <!-- Sale Catalogue -->
+        <div class="grid-item" role="article">
+            <h2 id="sale-catalogue">Sale Catalogue</h2>
+            <p>No Sales Yet!</p>
+        </div>
+    
+        <!-- Purchases -->
+        <div class="grid-item" role="article">
+            <h2 id="purchases">Purchases</h2>
+            <p>No Purchases Yet!</p>
+        </div>
+    
+        <!-- Video Placeholder -->
+        <div class="grid-item" role="complementary" aria-labelledby="video-title">
+            <h2 id="video-title">Video Here</h2>
+            <div class="video-container">
+                <iframe
+                    width="100%"
+                    height="100%"
+                    src="Pictures/6827122-uhd_3840_2160_25fps.mp4"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    aria-label="Embedded video">
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+  </body>
+</html>

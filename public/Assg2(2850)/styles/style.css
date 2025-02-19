@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:ital,wght@0,200..800;1,200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poiret+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap');
+@import url('search.css');
+@import url('sales.css');
+@import url('media.css');
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --font1: #000000; /* Black */
+    --font2: #FFFFFF; /* White */
+    --font3: hsla(42, 60%, 50%, 0.7); /* Gold */
+}
+
+.nav-section {
+    height: 15vh;
+    background-image: url("../Pictures/navbar_background.png");
+    background-position: center;
+    background-color: #3a3738;
+    text-align: center;
+    padding: 2em 0;
+    z-index: 2;
+}
+
+.nav-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.nav-leftbar h1 {
+    color: var(--font2);
+    font-family: "Playfair Display", serif;
+    font-size: 2em;
+    margin-bottom: 42%;
+}
+
+.nav-rightbar {
+    position: absolute;
+    top: 1.7%;
+    right: 6%;
+}
+
+.nav-rightbar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-rightbar ul li {
+    position: relative; /* Add this */
+}
+
+.nav-rightbar ul li a {
+    text-decoration: none;
+    color: var(--font2);
+    font-size: 1.1em;
+    padding: 10px;
+    font-weight: lighter;
+    font-family: "Atkinson Hyperlegible Mono", serif;
+    background-color:  hsla(42, 60%, 50%);
+    border-radius: 10%;
+    transition: 0.2s ease;
+}
+.nav-rightbar ul li a:hover {
+    border: 0.1em solid var(--font2);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6);
+}
+hr {
+    background-color: var(--font3);
+    height: 3vh;
+    overflow: hidden;
+}
+
+.body-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: var(--font2);
+    padding: 10% 2%;
+    font-family: "Poiret One", serif;;
+}
+
+.body-submain {
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+.body-leftpart {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.body-leftpart img {
+    width: 80%;
+    max-width: 25rem;
+    height: 350px;
+    object-fit: cover;
+    border: 0.5em solid var(--font3);
+}
+
+.body-rightpart {
+    flex: 1;
+    margin-left: 3%;
+}
+
+.body-rightpart h3 {
+    text-align: center;
+    font-size: 2em;
+    padding: 2%;
+}
+
+.body-rightpart p {
+    font-size: 1.5em;
+    line-height: 1.6;
+    margin-top: 3.5%;
+    padding: 2%;
+}
+
+.images-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 2%;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: var(--font2);
+    padding-top: 5%;
+    padding-bottom: 10%;
+}
+
+.image-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.image-card img {
+    width: 90%;
+    height: 250px;
+    display: block;
+    border: 0.5em solid var(--font3);
+    transition: transform 0.3s ease;
+    object-fit: cover;
+}
+
+.image-card:hover img {
+    transform: scale(1.1);
+    border: none;
+}
+
+.image-text {
+    position: absolute;
+    top: 0%;
+    right: -10%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 0, 0, 0.822);
+    padding: 10px;
+    border-radius: 30%;
+    font-size: 1.2em;
+    color: var(--font2);
+    transition: 0.2s ease-in-out;
+    z-index: 1;
+}
+
+.price-range {
+    height: 5vh;
+    width: 50%;
+    text-align: center;
+    padding-top: 2%;
+    margin-left: 25%;
+    margin-top: 4%;
+    font-size: 1.5em;
+    border-radius: 2%;
+    color: #FFFFFF;
+    background-color: #3a3738;
+}

@@ -1,0 +1,284 @@
+@import url("style.css");
+
+/* Grid Section */
+.sale-section {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 2%;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: var(--font2);
+    padding-top: 10%;
+    padding-bottom: 12%;
+}
+
+/* Grid Item */
+.grid-item {
+    background-color: rgba(50, 50, 50, 0.9); 
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 1px 4px 4.5px var(--font3); 
+    text-align: center;
+    display: block;
+    position: relative; 
+}
+
+.grid-item h2 {
+    font-size: 1.8em;
+    margin-bottom: 10px;
+    color: white;
+    position: absolute;
+    top: -13%; 
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: "Playfair Display", serif;
+    font-weight: lighter;
+}
+
+.grid-item p {
+    position: absolute;
+    top: 35%; 
+    left: 35%;
+    font-size: 1.2em;
+    color: var(--font2);
+    margin-top: 40px; 
+    font-family: "Playfair Display", serif;
+    font-weight: lighter;
+}
+
+/* Video Container */
+.video-container {
+    background-color:rgba(0, 0, 0, 0.9);
+    padding: 2em;
+    border-radius: 2%;
+    overflow: hidden; 
+}
+
+.video-container iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: none; 
+}
+
+@media (max-width: 1660px) and (min-width: 1310px){
+    .sale-section {
+        padding-top: 21%;
+        padding-bottom: 20%;
+    }
+}
+@media (max-width: 1310px) and (min-width: 1110px){
+    .sale-section {
+        padding-top: 25%;
+        padding-bottom: 25%;
+    }
+    .grid-item h2 {
+        font-size: 1.5em;
+    }
+    
+    .grid-item p {
+        left: 32%;
+    }
+}
+@media (max-width: 1110px) and (min-width: 800px) {
+    .sale-section {
+        display: grid;
+        grid-template-columns: 1fr; /* Ensures a single column */
+        grid-template-rows: auto; 
+        gap: 1.5rem; 
+        padding: 5%;
+        background-color: rgba(0, 0, 0, 0.9);
+        color: var(--font2);
+    }
+    
+    .grid-item {
+        background-color: rgba(50, 50, 50, 0.9); 
+        width: 100%;
+        padding: 10rem; 
+        border-radius: 8px;
+        box-shadow: 1px 4px 4.5px var(--font3);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .grid-item h2 {
+        font-size: 1.5em;
+        top: 10%; 
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: "Playfair Display", serif;
+        font-weight: lighter;
+    }
+    .grid-item p {
+        font-size: 1em;
+        color: var(--font2);
+        font-family: "Playfair Display", serif;
+        font-weight: lighter;
+        margin-top: 5%;
+        position: static; /* Fixes positioning issue */
+    }
+    .video-container {
+        padding: 2%;
+    }
+    .video-container iframe {
+        width: 100%;
+        height: 230px;
+        border: none; 
+    }
+}
+@media (max-width: 800px) and (min-width: 600px){
+    .sale-section {
+        display: grid;
+        grid-template-columns: 1fr; /* Ensures a single column */
+        grid-template-rows: auto; 
+        gap: 1.5rem; 
+        padding: 5%;
+        background-color: rgba(0, 0, 0, 0.9);
+        color: var(--font2);
+    }
+    
+    .grid-item {
+        background-color: rgba(50, 50, 50, 0.9); 
+        width: 100%;
+        padding: 10rem; 
+        border-radius: 8px;
+        box-shadow: 1px 4px 4.5px var(--font3);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .grid-item h2 {
+        font-size: 1.5em;
+        top: 10%; 
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: "Playfair Display", serif;
+        font-weight: lighter;
+    }
+    .grid-item p {
+        font-size: 1em;
+        color: var(--font2);
+        font-family: "Playfair Display", serif;
+        font-weight: lighter;
+        margin-top: 5%;
+        position: static; /* Fixes positioning issue */
+    }
+    .video-container {
+        padding: 2%;
+    }
+    .video-container iframe {
+        width: 100%;
+        height: 230px;
+        border: none; 
+    }
+}
+
+@media (max-width: 600px) and (min-width: 400px){
+    .sale-section {
+        display: grid;
+        grid-template-columns: 1fr; /* Ensures a single column */
+        grid-template-rows: auto; 
+        gap: 1.5rem; 
+        padding: 10%;
+        background-color: rgba(0, 0, 0, 0.9);
+        color: var(--font2);
+    }
+    
+    .grid-item {
+        background-color: rgba(50, 50, 50, 0.9); 
+        width: 100%;
+        padding: 5rem; 
+        border-radius: 8px;
+        box-shadow: 1px 4px 4.5px var(--font3);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .grid-item h2 {
+        font-size: 1.3em;
+        top: 8%; 
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: "Playfair Display", serif;
+        font-weight: lighter;
+    }
+    .grid-item p {
+        font-size: 1em;
+        color: var(--font2);
+        font-family: "Playfair Display", serif;
+        font-weight: lighter;
+        margin-top: 5%;
+        position: static; /* Fixes positioning issue */
+    }
+    .video-container {
+        padding: 2%;
+    }
+    .video-container iframe {
+        width: 100%;
+        height: 200px;
+        border: none; 
+    }   
+    
+}
+
+
+@media (max-width: 400px) and (min-width: 200px){
+    .sale-section {
+        display: grid;
+        grid-template-columns: 1fr; /* Ensures a single column */
+        grid-template-rows: auto; 
+        gap: 3rem; 
+        padding: 5%;
+        background-color: rgba(0, 0, 0, 0.9);
+        color: var(--font2);
+    }
+    
+    .grid-item {
+        background-color: rgba(50, 50, 50, 0.9); 
+        width: 100%;
+        padding: 4rem; 
+        border-radius: 8px;
+        box-shadow: 1px 4px 4.5px var(--font3);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-bottom: 50%;
+    }
+
+    .grid-item h2 {
+        font-size: 1em;
+        top: 10%; 
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: "Playfair Display", serif;
+        font-weight: lighter;
+        margin-bottom: 15px;
+    }
+    .grid-item p {
+        font-size: 0.7em;
+        color: var(--font2);
+        font-family: "Playfair Display", serif;
+        font-weight: lighter;
+        margin-top: 10%;
+        position: static; /* Fixes positioning issue */
+    }
+    .video-container {
+        padding: 2%;
+    }
+    .video-container iframe {
+        width: 100%;
+        height: 150px;
+        border: none; 
+    }   
+     
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="stylesheet" href="styles/search.css">
+    <link rel="stylesheet" href="styles/media.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FINESSE</title>
+  </head>
+  <body>
+    <section class="nav-section" role="navigation" aria-label="Main Navigation">
+        <div class="nav-bar">
+            <div class="nav-leftbar">
+                <h1>FINESSE</h1>
+            </div>
+            <div class="nav-rightbar">           
+                <ul role="menubar">
+                    <li role="menuitem"><a href="index.html" aria-label="Home">Home</a></li>
+                    <li role="menuitem"><a href="sales.html" aria-label="My Sales">My Sales</a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <hr>
+
+    <section class="search-container" role="search" aria-labelledby="search-heading">
+        <h2 id="search-heading" hidden>Search Section</h2>
+
+        <label for="postal-code">Postal Code</label>
+        <input type="text" id="postal-code" placeholder="Enter your postal code" aria-label="Enter your postal code">
+
+        <label for="address-search">Search Address</label>
+        <input type="text" id="address-search" placeholder="Enter your Address" aria-label="Enter your address">
+
+        <button type="button" class="search-button" aria-label="Search for location">Search</button>
+    </section>
+  </body>
+</html>
