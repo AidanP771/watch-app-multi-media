@@ -6,6 +6,7 @@ import Collections from "./pages/Collections";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Cart from "./pages/Cart";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         element={
           <Layout>
             <Home />
+            <PrivacyPolicy />
           </Layout>
         }
       />
