@@ -9,10 +9,8 @@ import LimitedEditionPage from './pages/LimitedEditionPage';
 import InquiryPage from './pages/InquiryPage';
 import ShopPage from './pages/ShopPage';
 import CartPage from './pages/CartPage';
-import ProfilePage from './pages/ProfilePage';
+import CheckoutPage from './pages/CheckoutPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
 import { CartProvider } from './context/CartContext';
 
 function App() {
@@ -30,10 +28,8 @@ function App() {
               <Route path="/inquiry" element={<InquiryPage />} />
               <Route path="/shop/:id" element={<ShopPage />} />
               <Route path="/cart" element={<CartPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignupPage />} />
             </Routes>
           </main>
           <Footer />

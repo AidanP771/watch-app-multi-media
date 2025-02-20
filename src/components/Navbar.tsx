@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, ShoppingCart, User } from 'lucide-react';
+import { Search, ShoppingCart } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import SearchModal from './SearchModal';
@@ -38,13 +38,6 @@ const Navbar = () => {
               aria-label="Search"
             >
               <Search className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => navigate('/profile')}
-              className="text-white hover:text-secondary-light transition p-2 rounded-full hover:bg-primary-light"
-              aria-label="Profile"
-            >
-              <User className="w-5 h-5" />
             </button>
             <button
               onClick={() => navigate('/cart')}

@@ -99,7 +99,7 @@ const CartPage = () => {
               Continue Shopping
             </button>
             <button
-              onClick={() => alert('Checkout functionality coming soon!')}
+              onClick={() => navigate('/checkout')}
               className="flex-1 bg-secondary hover:bg-secondary-light text-primary px-6 py-3 rounded font-semibold transition"
             >
               Proceed to Checkout
