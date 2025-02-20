@@ -214,22 +214,15 @@ const CreateListingModal: React.FC<CreateListingModalProps> = ({ isOpen, onClose
     setErrors({});
 
     try {
-      // Check if bucket exists before uploading
-      const { data: buckets } = await supabase.storage.listBuckets();
-      if (!buckets?.some(bucket => bucket.name === 'listings')) {
-        throw new Error('Storage not properly initialized');
-      }
-
       // Upload images
       const imageUrls: string[] = [];
       for (const [index, file] of formData.images.entries()) {
         const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-        const filePath = `watch-listings/${fileName}`;
+        const fileName = `watch-listings/${user!.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
 
         const { error: uploadError, data } = await supabase.storage
           .from('listings')
-          .upload(filePath, file, {
+          .upload(fileName, file, {
             cacheControl: '3600',
             upsert: false
           });
@@ -238,7 +231,7 @@ const CreateListingModal: React.FC<CreateListingModalProps> = ({ isOpen, onClose
 
         const { data: { publicUrl } } = supabase.storage
           .from('listings')
-          .getPublicUrl(filePath);
+          .getPublicUrl(fileName);
 
         imageUrls.push(publicUrl);
         setUploadProgress(((index + 1) / formData.images.length) * 100);
