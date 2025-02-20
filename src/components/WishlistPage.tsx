@@ -4,6 +4,7 @@ import { Heart, Share2, Trash2, AlertCircle, Search, ArrowUpDown } from 'lucide-
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import SharePopup from './SharePopup';
+import { collections } from '../data/collections';
 
 interface WishlistItem {
   id: string;
