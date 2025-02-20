@@ -1,19 +1,35 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Mail, Lock, AlertCircle } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { signIn } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  
+  const from = location.state?.from?.pathname || '/profile';
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically handle authentication
-    console.log('Login attempt:', formData);
-    navigate('/profile');
+    setError('');
+    setIsLoading(true);
+
+    try {
+      await signIn(formData.email, formData.password);
+      navigate(from, { replace: true });
+    } catch (err) {
+      setError('Invalid email or password');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,6 +43,13 @@ const LoginPage = () => {
         <div className="bg-primary-light rounded-lg p-8">
           <h1 className="text-3xl font-serif text-white mb-6 text-center">Welcome Back</h1>
           
+          {error && (
+            <div className="mb-6 p-4 bg-red-500/10 border border-red-500 rounded-lg flex items-center gap-2 text-red-500">
+              <AlertCircle className="w-5 h-5" />
+              <p>{error}</p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-white mb-2">Email</label>
@@ -67,16 +90,21 @@ const LoginPage = () => {
                 <input type="checkbox" className="mr-2" />
                 <span className="text-gray-light">Remember me</span>
               </label>
-              <a href="#" className="text-secondary hover:text-secondary-light transition">
+              <Link to="/reset-password" className="text-secondary hover:text-secondary-light transition">
                 Forgot password?
-              </a>
+              </Link>
             </div>
             
             <button
               type="submit"
-              className="w-full bg-secondary hover:bg-secondary-light text-primary px-6 py-3 rounded font-semibold transition"
+              disabled={isLoading}
+              className="w-full bg-secondary hover:bg-secondary-light text-primary px-6 py-3 rounded font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
-              Log In
+              {isLoading ? (
+                <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                'Log In'
+              )}
             </button>
           </form>
 
