@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Filter, ArrowUpDown, Plus, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
+import CreateListingModal from '../components/CreateListingModal';
 
 interface WatchListing {
   id: string;
@@ -25,6 +26,7 @@ const MarketplacePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showAuthAlert, setShowAuthAlert] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     minPrice: '',
@@ -62,11 +64,15 @@ const MarketplacePage = () => {
       setShowAuthAlert(true);
       setTimeout(() => {
         setShowAuthAlert(false);
-        navigate('/login', { state: { from: '/marketplace/create' } });
+        navigate('/login', { state: { from: '/marketplace' } });
       }, 2000);
       return;
     }
-    navigate('/marketplace/create');
+    setShowCreateModal(true);
+  };
+
+  const handleListingCreated = () => {
+    fetchListings();
   };
 
   const filteredListings = listings.filter(listing => {
@@ -217,6 +223,13 @@ const MarketplacePage = () => {
             ))}
           </div>
         )}
+
+        {/* Create Listing Modal */}
+        <CreateListingModal
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          onSuccess={handleListingCreated}
+        />
       </div>
     </div>
   );
