@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Search, ShoppingCart, User } from 'lucide-react';
+import { Search, ShoppingCart, User, Heart } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { useWishlist } from '../context/WishlistContext';
 import SearchModal from './SearchModal';
 
 const Navbar = () => {
@@ -10,6 +11,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { items } = useCart();
   const { user } = useAuth();
+  const { wishlistCount } = useWishlist();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   
   const cartItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -48,6 +50,20 @@ const Navbar = () => {
             >
               <User className="w-5 h-5" />
             </Link>
+            {user && (
+              <Link
+                to="/wishlist"
+                className="relative text-white hover:text-secondary-light transition p-2 rounded-full hover:bg-primary-light"
+                aria-label="Wishlist"
+              >
+                <Heart className="w-5 h-5" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-secondary text-primary w-5 h-5 rounded-full text-xs flex items-center justify-center font-bold">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Link>
+            )}
             <button
               onClick={() => navigate('/cart')}
               className="relative text-white hover:text-secondary-light transition p-2 rounded-full hover:bg-primary-light"

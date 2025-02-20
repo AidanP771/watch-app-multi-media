@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Heart, Share2, Check } from 'lucide-react';
+import { ShoppingBag, Share2, Check } from 'lucide-react';
 import { collections } from '../data/collections';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabase';
 import SharePopup from '../components/SharePopup';
+import WishlistButton from '../components/WishlistButton';
 
 const ShopPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [quantity, setQuantity] = useState(1);
   const [showShareMenu, setShowShareMenu] = useState(false);
-  const { items, addToCart, wishlist, addToWishlist, removeFromWishlist } = useCart();
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  const { items, addToCart } = useCart();
   
   // Check if item is already in cart
   const isInCart = items.some(item => item.id.toString() === id);
@@ -19,6 +24,36 @@ const ShopPage = () => {
   const watch = collections
     .flatMap(collection => collection.watches)
     .find(watch => watch.id.toString() === id);
+
+  useEffect(() => {
+    if (user && watch) {
+      checkWishlistStatus();
+    }
+  }, [user, watch]);
+
+  const checkWishlistStatus = async () => {
+    try {
+      const { data: wishlist } = await supabase
+        .from('wishlists')
+        .select('id')
+        .eq('user_id', user!.id)
+        .eq('name', 'Default')
+        .single();
+
+      if (wishlist) {
+        const { data: items } = await supabase
+          .from('wishlist_items')
+          .select('id')
+          .eq('wishlist_id', wishlist.id)
+          .eq('product_id', watch!.id)
+          .single();
+
+        setIsInWishlist(!!items);
+      }
+    } catch (err) {
+      console.error('Error checking wishlist status:', err);
+    }
+  };
 
   if (!watch) {
     return (
@@ -36,8 +71,6 @@ const ShopPage = () => {
     );
   }
 
-  const isInWishlist = wishlist.includes(watch.id);
-
   const handleQuantityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setQuantity(parseInt(e.target.value));
   };
@@ -53,14 +86,6 @@ const ShopPage = () => {
         quantity: quantity,
         image: watch.image
       });
-    }
-  };
-
-  const handleWishlist = () => {
-    if (isInWishlist) {
-      removeFromWishlist(watch.id);
-    } else {
-      addToWishlist(watch.id);
     }
   };
 
@@ -130,13 +155,11 @@ const ShopPage = () => {
               </button>
 
               <div className="flex gap-4">
-                <button 
-                  onClick={handleWishlist}
-                  className={`flex-1 border ${isInWishlist ? 'border-secondary bg-secondary/10' : 'border-gray-dark'} hover:border-secondary text-white px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2`}
-                >
-                  <Heart className={`w-5 h-5 ${isInWishlist ? 'fill-secondary' : ''}`} />
-                  {isInWishlist ? 'In Wishlist' : 'Add to Wishlist'}
-                </button>
+                <WishlistButton
+                  productId={watch.id}
+                  isInWishlist={isInWishlist}
+                  onToggle={setIsInWishlist}
+                />
                 <button 
                   onClick={() => setShowShareMenu(true)}
                   className="flex-1 border border-gray-dark hover:border-secondary text-white px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2"
