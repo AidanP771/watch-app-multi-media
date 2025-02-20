@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { Search, ShoppingCart } from 'lucide-react';
+import { Search, ShoppingCart, User } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import SearchModal from './SearchModal';
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { items } = useCart();
+  const { user } = useAuth();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   
   const cartItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -39,6 +41,13 @@ const Navbar = () => {
             >
               <Search className="w-5 h-5" />
             </button>
+            <Link
+              to={user ? "/profile" : "/login"}
+              className="text-white hover:text-secondary-light transition p-2 rounded-full hover:bg-primary-light"
+              aria-label="Account"
+            >
+              <User className="w-5 h-5" />
+            </Link>
             <button
               onClick={() => navigate('/cart')}
               className="relative text-white hover:text-secondary-light transition p-2 rounded-full hover:bg-primary-light"

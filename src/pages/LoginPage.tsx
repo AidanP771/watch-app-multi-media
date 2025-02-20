@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, AlertCircle } from 'lucide-react';
+import { Mail, Lock, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
@@ -9,6 +9,7 @@ const LoginPage = () => {
   const { signIn } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   
   const from = location.state?.from?.pathname || '/profile';
 
@@ -17,16 +18,38 @@ const LoginPage = () => {
     password: '',
   });
 
+  const [touched, setTouched] = useState({
+    email: false,
+    password: false,
+  });
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Validate form
+    if (!validateEmail(formData.email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       await signIn(formData.email, formData.password);
       navigate(from, { replace: true });
     } catch (err) {
-      setError('Invalid email or password');
+      setError('Invalid email or password. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -35,6 +58,12 @@ const LoginPage = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    setError(''); // Clear error when user types
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { name } = e.target;
+    setTouched(prev => ({ ...prev, [name]: true }));
   };
 
   return (
@@ -45,7 +74,7 @@ const LoginPage = () => {
           
           {error && (
             <div className="mb-6 p-4 bg-red-500/10 border border-red-500 rounded-lg flex items-center gap-2 text-red-500">
-              <AlertCircle className="w-5 h-5" />
+              <AlertCircle className="w-5 h-5 shrink-0" />
               <p>{error}</p>
             </div>
           )}
@@ -61,28 +90,51 @@ const LoginPage = () => {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-2 rounded bg-primary text-white border border-gray-dark focus:border-secondary outline-none"
+                  onBlur={handleBlur}
+                  className={`w-full pl-10 pr-4 py-2 rounded bg-primary text-white border ${
+                    touched.email && !validateEmail(formData.email)
+                      ? 'border-red-500'
+                      : 'border-gray-dark'
+                  } focus:border-secondary outline-none`}
                   placeholder="Enter your email"
                 />
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-light" />
               </div>
+              {touched.email && !validateEmail(formData.email) && (
+                <p className="mt-1 text-sm text-red-500">Please enter a valid email address</p>
+              )}
             </div>
             
             <div>
               <label htmlFor="password" className="block text-white mb-2">Password</label>
               <div className="relative">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   id="password"
                   name="password"
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-2 rounded bg-primary text-white border border-gray-dark focus:border-secondary outline-none"
+                  onBlur={handleBlur}
+                  className={`w-full pl-10 pr-12 py-2 rounded bg-primary text-white border ${
+                    touched.password && formData.password.length < 6
+                      ? 'border-red-500'
+                      : 'border-gray-dark'
+                  } focus:border-secondary outline-none`}
                   placeholder="Enter your password"
                 />
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-light" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-light hover:text-white transition"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
+              {touched.password && formData.password.length < 6 && (
+                <p className="mt-1 text-sm text-red-500">Password must be at least 6 characters long</p>
+              )}
             </div>
 
             <div className="flex items-center justify-between">

@@ -12,7 +12,11 @@ const NewArrivalsPage = () => {
         <h1 className="text-4xl font-serif text-secondary mb-12">New Arrivals</h1>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {newArrivals?.watches.map((watch) => (
-            <div key={watch.id} className="group">
+            <div 
+              key={watch.id} 
+              className="group cursor-pointer"
+              onClick={() => navigate(`/shop/${watch.id}`)}
+            >
               <div className="relative overflow-hidden">
                 <img 
                   src={watch.image} 
@@ -25,15 +29,9 @@ const NewArrivalsPage = () => {
                 </div>
               </div>
               <div className="mt-6">
-                <h3 className="text-2xl font-serif text-white">{watch.name}</h3>
+                <h3 className="text-2xl font-serif text-white group-hover:text-secondary transition">{watch.name}</h3>
                 <p className="text-secondary mt-2">${watch.price.toLocaleString()}</p>
                 <p className="text-gray-light mt-2">{watch.description}</p>
-                <button 
-                  onClick={() => navigate(`/shop/${watch.id}`)}
-                  className="mt-4 bg-secondary hover:bg-secondary-light text-primary px-6 py-2 rounded transition"
-                >
-                  Shop Now
-                </button>
               </div>
             </div>
           ))}

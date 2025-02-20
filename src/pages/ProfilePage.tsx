@@ -3,6 +3,7 @@ import { User, Settings, ShoppingBag, Heart, LogOut, Camera, AlertCircle, Check 
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import OrderHistory from '../components/OrderHistory';
 
 interface Profile {
   name: string;
@@ -18,6 +19,7 @@ const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [activeTab, setActiveTab] = useState<'profile' | 'orders' | 'settings' | 'wishlist'>('profile');
 
   useEffect(() => {
     if (user) {
@@ -30,14 +32,18 @@ const ProfilePage = () => {
       const { data, error } = await supabase
         .from('profiles')
         .select('name, avatar_url')
-        .eq('id', user?.id)
-        .single();
+        .eq('id', user!.id)
+        .maybeSingle();
 
       if (error) throw error;
-      setProfile(data);
-      setEditName(data?.name || '');
+      
+      if (data) {
+        setProfile(data);
+        setEditName(data.name || '');
+      }
     } catch (err) {
       console.error('Error fetching profile:', err);
+      setError('Failed to load profile');
     }
   };
 
@@ -47,6 +53,7 @@ const ProfilePage = () => {
       navigate('/login');
     } catch (err) {
       console.error('Error signing out:', err);
+      setError('Failed to sign out');
     }
   };
 
@@ -98,6 +105,95 @@ const ProfilePage = () => {
     );
   }
 
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'orders':
+        return <OrderHistory />;
+      case 'settings':
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-serif text-white">Account Settings</h2>
+            {/* Add account settings content here */}
+          </div>
+        );
+      case 'wishlist':
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-serif text-white">Wishlist</h2>
+            {/* Add wishlist content here */}
+          </div>
+        );
+      default:
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-6">
+              <div className="relative">
+                <div className="w-20 h-20 rounded-full bg-secondary/20 flex items-center justify-center">
+                  {profile?.avatar_url ? (
+                    <img
+                      src={profile.avatar_url}
+                      alt="Profile"
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <User className="w-10 h-10 text-secondary" />
+                  )}
+                </div>
+                <button
+                  className="absolute bottom-0 right-0 w-8 h-8 bg-secondary rounded-full flex items-center justify-center hover:bg-secondary-light transition"
+                  aria-label="Change profile picture"
+                >
+                  <Camera className="w-4 h-4 text-primary" />
+                </button>
+              </div>
+              <div className="flex-1">
+                {isEditing ? (
+                  <div className="space-y-4">
+                    <input
+                      type="text"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      className="w-full px-4 py-2 bg-primary text-white border border-gray-dark rounded focus:border-secondary outline-none"
+                      placeholder="Enter your name"
+                    />
+                    <div className="flex gap-4">
+                      <button
+                        onClick={handleProfileUpdate}
+                        disabled={isLoading}
+                        className="bg-secondary hover:bg-secondary-light text-primary px-4 py-2 rounded font-semibold transition disabled:opacity-50"
+                      >
+                        {isLoading ? 'Saving...' : 'Save Changes'}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setIsEditing(false);
+                          setEditName(profile?.name || '');
+                        }}
+                        className="border border-gray-dark hover:border-secondary text-white px-4 py-2 rounded font-semibold transition"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <h2 className="text-2xl font-serif text-white">{profile?.name || 'Your Profile'}</h2>
+                    <p className="text-gray-light">{user.email}</p>
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="mt-2 text-secondary hover:text-secondary-light transition"
+                    >
+                      Edit Profile
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+    }
+  };
+
   return (
     <div className="pt-24 px-6 min-h-screen bg-primary">
       <div className="max-w-4xl mx-auto">
@@ -116,120 +212,61 @@ const ProfilePage = () => {
         )}
 
         <div className="bg-primary-light rounded-lg p-8">
-          <div className="flex items-center gap-6 mb-8">
-            <div className="relative">
-              <div className="w-20 h-20 rounded-full bg-secondary/20 flex items-center justify-center">
-                {profile?.avatar_url ? (
-                  <img
-                    src={profile.avatar_url}
-                    alt="Profile"
-                    className="w-full h-full rounded-full object-cover"
-                  />
-                ) : (
-                  <User className="w-10 h-10 text-secondary" />
-                )}
-              </div>
-              <button
-                className="absolute bottom-0 right-0 w-8 h-8 bg-secondary rounded-full flex items-center justify-center hover:bg-secondary-light transition"
-                aria-label="Change profile picture"
-              >
-                <Camera className="w-4 h-4 text-primary" />
-              </button>
-            </div>
-            <div className="flex-1">
-              {isEditing ? (
-                <div className="space-y-4">
-                  <input
-                    type="text"
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    className="w-full px-4 py-2 bg-primary text-white border border-gray-dark rounded focus:border-secondary outline-none"
-                    placeholder="Enter your name"
-                  />
-                  <div className="flex gap-4">
-                    <button
-                      onClick={handleProfileUpdate}
-                      disabled={isLoading}
-                      className="bg-secondary hover:bg-secondary-light text-primary px-4 py-2 rounded font-semibold transition disabled:opacity-50"
-                    >
-                      {isLoading ? 'Saving...' : 'Save Changes'}
-                    </button>
-                    <button
-                      onClick={() => {
-                        setIsEditing(false);
-                        setEditName(profile?.name || '');
-                      }}
-                      className="border border-gray-dark hover:border-secondary text-white px-4 py-2 rounded font-semibold transition"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <h1 className="text-3xl font-serif text-white">{profile?.name || 'Your Profile'}</h1>
-                  <p className="text-gray-light">{user.email}</p>
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="mt-2 text-secondary hover:text-secondary-light transition"
-                  >
-                    Edit Profile
-                  </button>
-                </>
-              )}
-            </div>
+          {/* Navigation Tabs */}
+          <div className="flex flex-wrap gap-4 mb-8">
+            <button
+              onClick={() => setActiveTab('profile')}
+              className={`px-6 py-2 rounded-full transition ${
+                activeTab === 'profile'
+                  ? 'bg-secondary text-primary'
+                  : 'text-white hover:bg-primary'
+              }`}
+            >
+              Profile
+            </button>
+            <button
+              onClick={() => setActiveTab('orders')}
+              className={`px-6 py-2 rounded-full transition ${
+                activeTab === 'orders'
+                  ? 'bg-secondary text-primary'
+                  : 'text-white hover:bg-primary'
+              }`}
+            >
+              Order History
+            </button>
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`px-6 py-2 rounded-full transition ${
+                activeTab === 'settings'
+                  ? 'bg-secondary text-primary'
+                  : 'text-white hover:bg-primary'
+              }`}
+            >
+              Settings
+            </button>
+            <button
+              onClick={() => setActiveTab('wishlist')}
+              className={`px-6 py-2 rounded-full transition ${
+                activeTab === 'wishlist'
+                  ? 'bg-secondary text-primary'
+                  : 'text-white hover:bg-primary'
+              }`}
+            >
+              Wishlist
+            </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <button className="p-6 bg-primary rounded-lg hover:bg-primary-light transition group">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center group-hover:bg-secondary/30 transition">
-                  <Settings className="w-6 h-6 text-secondary" />
-                </div>
-                <div className="text-left">
-                  <h3 className="text-white font-semibold">Account Settings</h3>
-                  <p className="text-gray-light text-sm">Update your personal information</p>
-                </div>
-              </div>
-            </button>
+          {/* Tab Content */}
+          {renderTabContent()}
 
-            <button className="p-6 bg-primary rounded-lg hover:bg-primary-light transition group">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center group-hover:bg-secondary/30 transition">
-                  <ShoppingBag className="w-6 h-6 text-secondary" />
-                </div>
-                <div className="text-left">
-                  <h3 className="text-white font-semibold">Order History</h3>
-                  <p className="text-gray-light text-sm">View your past purchases</p>
-                </div>
-              </div>
-            </button>
-
-            <button className="p-6 bg-primary rounded-lg hover:bg-primary-light transition group">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center group-hover:bg-secondary/30 transition">
-                  <Heart className="w-6 h-6 text-secondary" />
-                </div>
-                <div className="text-left">
-                  <h3 className="text-white font-semibold">Wishlist</h3>
-                  <p className="text-gray-light text-sm">Manage your saved items</p>
-                </div>
-              </div>
-            </button>
-
+          {/* Sign Out Button */}
+          <div className="mt-8 pt-8 border-t border-gray-dark">
             <button
               onClick={handleSignOut}
-              className="p-6 bg-primary rounded-lg hover:bg-primary-light transition group"
+              className="w-full border border-red-500 text-red-500 hover:bg-red-500/10 px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2"
             >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center group-hover:bg-secondary/30 transition">
-                  <LogOut className="w-6 h-6 text-secondary" />
-                </div>
-                <div className="text-left">
-                  <h3 className="text-white font-semibold">Sign Out</h3>
-                  <p className="text-gray-light text-sm">Log out of your account</p>
-                </div>
-              </div>
+              <LogOut className="w-5 h-5" />
+              Sign Out
             </button>
           </div>
         </div>

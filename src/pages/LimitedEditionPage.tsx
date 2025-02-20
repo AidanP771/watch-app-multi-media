@@ -15,7 +15,11 @@ const LimitedEditionPage = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {limitedEdition?.watches.map((watch) => (
-            <div key={watch.id} className="group">
+            <div 
+              key={watch.id} 
+              className="group cursor-pointer"
+              onClick={() => navigate('/inquiry', { state: { watch } })}
+            >
               <div className="relative overflow-hidden">
                 {'additionalImages' in watch ? (
                   <WatchCarousel 
@@ -36,18 +40,12 @@ const LimitedEditionPage = () => {
                 )}
               </div>
               <div className="mt-6">
-                <h3 className="text-2xl font-serif text-white">{watch.name}</h3>
+                <h3 className="text-2xl font-serif text-white group-hover:text-secondary transition">{watch.name}</h3>
                 {'subtitle' in watch && (
                   <p className="text-gray-light mt-1 italic">{watch.subtitle}</p>
                 )}
                 <p className="text-secondary mt-2">${watch.price.toLocaleString()}</p>
                 <p className="text-gray-light mt-2">{watch.description}</p>
-                <button 
-                  onClick={() => navigate('/inquiry', { state: { watch } })}
-                  className="mt-4 bg-accent hover:bg-accent-light text-white px-6 py-2 rounded transition"
-                >
-                  Inquire
-                </button>
               </div>
             </div>
           ))}

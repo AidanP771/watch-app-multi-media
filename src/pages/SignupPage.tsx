@@ -46,7 +46,7 @@ const SignupPage = () => {
     setIsLoading(true);
 
     try {
-      await signUp(formData.email, formData.password);
+      await signUp(formData.email, formData.password, formData.name);
       setSuccess(true);
     } catch (err: any) {
       setError(err.message || 'Failed to create account. Please try again.');
