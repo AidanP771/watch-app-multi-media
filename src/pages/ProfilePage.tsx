@@ -12,7 +12,7 @@ interface Profile {
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const { user, signOut, updateProfile } = useAuth();
+  const { user, signOut } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState('');
@@ -49,11 +49,22 @@ const ProfilePage = () => {
 
   const handleSignOut = async () => {
     try {
+      setIsLoading(true);
+      setError('');
+      
+      // Clear any stored session data
+      localStorage.removeItem('sb-ybfwdwcrnhjcobgngbdm-auth-token');
+      
+      // Sign out from Supabase
       await signOut();
+      
+      // Navigate to login page
       navigate('/login');
     } catch (err) {
       console.error('Error signing out:', err);
-      setError('Failed to sign out');
+      setError('Failed to sign out. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -63,7 +74,13 @@ const ProfilePage = () => {
     setSuccess('');
 
     try {
-      await updateProfile({ name: editName });
+      const { error } = await supabase
+        .from('profiles')
+        .update({ name: editName })
+        .eq('id', user!.id);
+
+      if (error) throw error;
+
       setProfile(prev => ({ ...prev!, name: editName }));
       setIsEditing(false);
       setSuccess('Profile updated successfully');
@@ -246,10 +263,17 @@ const ProfilePage = () => {
           <div className="mt-8 pt-8 border-t border-gray-dark">
             <button
               onClick={handleSignOut}
-              className="w-full border border-red-500 text-red-500 hover:bg-red-500/10 px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2"
+              disabled={isLoading}
+              className="w-full border border-red-500 text-red-500 hover:bg-red-500/10 px-6 py-3 rounded font-semibold transition flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              <LogOut className="w-5 h-5" />
-              Sign Out
+              {isLoading ? (
+                <div className="w-6 h-6 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <>
+                  <LogOut className="w-5 h-5" />
+                  Sign Out
+                </>
+              )}
             </button>
           </div>
         </div>

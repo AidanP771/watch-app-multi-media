@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, ArrowUpDown, Plus } from 'lucide-react';
+import { Search, Filter, ArrowUpDown, Plus, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 
@@ -23,6 +23,8 @@ const MarketplacePage = () => {
   const { user } = useAuth();
   const [listings, setListings] = useState<WatchListing[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [showAuthAlert, setShowAuthAlert] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     minPrice: '',
@@ -49,6 +51,7 @@ const MarketplacePage = () => {
       setListings(data || []);
     } catch (err) {
       console.error('Error fetching listings:', err);
+      setError('Failed to load listings');
     } finally {
       setLoading(false);
     }
@@ -56,10 +59,14 @@ const MarketplacePage = () => {
 
   const handleCreateListing = () => {
     if (!user) {
-      navigate('/login', { state: { from: '/marketplace/create' } });
-    } else {
-      navigate('/marketplace/create');
+      setShowAuthAlert(true);
+      setTimeout(() => {
+        setShowAuthAlert(false);
+        navigate('/login', { state: { from: '/marketplace/create' } });
+      }, 2000);
+      return;
     }
+    navigate('/marketplace/create');
   };
 
   const filteredListings = listings.filter(listing => {
@@ -107,6 +114,16 @@ const MarketplacePage = () => {
             Create Listing
           </button>
         </div>
+
+        {/* Auth Alert */}
+        {showAuthAlert && (
+          <div className="fixed top-20 right-6 bg-primary-light border border-secondary rounded-lg p-4 shadow-lg animate-fade-in z-50">
+            <div className="flex items-center gap-2 text-secondary">
+              <AlertCircle className="w-5 h-5" />
+              <p>Please sign in to create a listing</p>
+            </div>
+          </div>
+        )}
 
         {/* Search and Filters */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -162,6 +179,11 @@ const MarketplacePage = () => {
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-secondary"></div>
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center h-64 text-red-500 gap-2">
+            <AlertCircle className="w-6 h-6" />
+            <p>{error}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
