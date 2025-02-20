@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Settings, ShoppingBag, Heart, LogOut, Camera, AlertCircle, Check } from 'lucide-react';
+import { User, Settings, ShoppingBag, LogOut, Camera, AlertCircle, Check } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -19,7 +19,7 @@ const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [activeTab, setActiveTab] = useState<'profile' | 'orders' | 'settings' | 'wishlist'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'orders' | 'settings'>('profile');
 
   useEffect(() => {
     if (user) {
@@ -114,13 +114,6 @@ const ProfilePage = () => {
           <div className="space-y-6">
             <h2 className="text-2xl font-serif text-white">Account Settings</h2>
             {/* Add account settings content here */}
-          </div>
-        );
-      case 'wishlist':
-        return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-serif text-white">Wishlist</h2>
-            {/* Add wishlist content here */}
           </div>
         );
       default:
@@ -243,16 +236,6 @@ const ProfilePage = () => {
               }`}
             >
               Settings
-            </button>
-            <button
-              onClick={() => setActiveTab('wishlist')}
-              className={`px-6 py-2 rounded-full transition ${
-                activeTab === 'wishlist'
-                  ? 'bg-secondary text-primary'
-                  : 'text-white hover:bg-primary'
-              }`}
-            >
-              Wishlist
             </button>
           </div>
 
