@@ -31,6 +31,7 @@ const Navbar = () => {
               <Link to="/collections" className={`${isActive('/collections')} transition`}>Collections</Link>
               <Link to="/new-arrivals" className={`${isActive('/new-arrivals')} transition`}>New Arrivals</Link>
               <Link to="/limited-edition" className={`${isActive('/limited-edition')} transition`}>Limited Edition</Link>
+              <Link to="/marketplace" className={`${isActive('/marketplace')} transition`}>Marketplace</Link>
               <Link to="/inquiry" className={`${isActive('/inquiry')} transition`}>Contact Us</Link>
             </div>
           </div>

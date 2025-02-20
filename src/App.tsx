@@ -14,7 +14,7 @@ import ProfilePage from './pages/ProfilePage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
-import WishlistPage from './components/WishlistPage';
+import MarketplacePage from './pages/MarketplacePage';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -34,6 +34,7 @@ function App() {
                   <Route path="/collections" element={<CollectionsPage />} />
                   <Route path="/new-arrivals" element={<NewArrivalsPage />} />
                   <Route path="/limited-edition" element={<LimitedEditionPage />} />
+                  <Route path="/marketplace" element={<MarketplacePage />} />
                   <Route path="/inquiry" element={<InquiryPage />} />
                   <Route path="/shop/:id" element={<ShopPage />} />
                   <Route path="/cart" element={<CartPage />} />
@@ -50,14 +51,6 @@ function App() {
                     element={
                       <ProtectedRoute>
                         <ProfilePage />
-                      </ProtectedRoute>
-                    } 
-                  />
-                  <Route 
-                    path="/wishlist" 
-                    element={
-                      <ProtectedRoute>
-                        <WishlistPage />
                       </ProtectedRoute>
                     } 
                   />
