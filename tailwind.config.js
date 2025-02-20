@@ -4,26 +4,27 @@ export default {
   theme: {
     extend: {
       colors: {
-        'finesse': {
-          gold: '#D4AF37',
-          green: '#1A472A',
-          black: '#121212',
-          gray: {
-            100: '#F5F5F5',
-            200: '#E5E5E5',
-            300: '#D4D4D4',
-            400: '#A3A3A3',
-            500: '#737373',
-            600: '#525252',
-            700: '#404040',
-            800: '#262626',
-            900: '#171717',
-          }
+        primary: {
+          DEFAULT: '#1A1A1A', // Rich black
+          light: '#2A2A2A',
+        },
+        secondary: {
+          DEFAULT: '#D4AF37', // Metallic gold
+          light: '#E5C158',
+        },
+        accent: {
+          DEFAULT: '#2E5D4B', // Deep forest green
+          light: '#3A7561',
+        },
+        gray: {
+          dark: '#333333',
+          medium: '#666666',
+          light: '#999999',
         }
       },
       fontFamily: {
-        'playfair': ['Playfair Display', 'serif'],
-        'raleway': ['Raleway', 'sans-serif'],
+        sans: ['Inter', 'sans-serif'],
+        serif: ['Playfair Display', 'serif'],
       }
     },
   },
