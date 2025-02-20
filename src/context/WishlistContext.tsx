@@ -7,6 +7,8 @@ interface WishlistContextType {
   isInWishlist: (productId: number) => boolean;
   addToWishlist: (productId: number) => Promise<void>;
   removeFromWishlist: (productId: number) => Promise<void>;
+  isLoading: boolean;
+  error: string | null;
 }
 
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
@@ -14,104 +16,151 @@ const WishlistContext = createContext<WishlistContextType | undefined>(undefined
 export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
   const [wishlistItems, setWishlistItems] = useState<number[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [wishlistId, setWishlistId] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
       fetchWishlistItems();
     } else {
       setWishlistItems([]);
+      setWishlistId(null);
     }
   }, [user]);
 
+  useEffect(() => {
+    if (!user || !wishlistId) return;
+
+    // Subscribe to wishlist changes
+    const subscription = supabase
+      .channel('wishlist_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'wishlist_items',
+          filter: `wishlist_id=eq.${wishlistId}`
+        },
+        () => {
+          fetchWishlistItems();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [user, wishlistId]);
+
   const getOrCreateDefaultWishlist = async () => {
-    if (!user) return null;
-
     try {
-      // Try to get existing default wishlist
-      const { data: existingWishlist, error: fetchError } = await supabase
-        .from('wishlists')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('name', 'Default')
-        .maybeSingle();
+      // Call the stored function to get or create the default wishlist
+      const { data: result, error: functionError } = await supabase
+        .rpc('get_or_create_default_wishlist', {
+          p_user_id: user!.id
+        });
 
-      if (existingWishlist) {
-        return existingWishlist;
-      }
-
-      // If no wishlist exists, create one
-      const { data: newWishlist, error: createError } = await supabase
-        .from('wishlists')
-        .insert({
-          user_id: user.id,
-          name: 'Default',
-          is_public: false
-        })
-        .select('id')
-        .single();
-
-      if (createError) throw createError;
-      return newWishlist;
+      if (functionError) throw functionError;
+      return result;
     } catch (err) {
-      console.error('Error getting/creating wishlist:', err);
-      return null;
+      console.error('Error getting/creating default wishlist:', err);
+      throw err;
     }
   };
 
   const fetchWishlistItems = async () => {
-    try {
-      const wishlist = await getOrCreateDefaultWishlist();
-      if (!wishlist) return;
+    if (!user) return;
+    
+    setIsLoading(true);
+    setError(null);
 
-      const { data: items } = await supabase
+    try {
+      // Get or create default wishlist
+      const defaultWishlistId = await getOrCreateDefaultWishlist();
+      setWishlistId(defaultWishlistId);
+
+      // Fetch wishlist items
+      const { data: items, error: itemsError } = await supabase
         .from('wishlist_items')
         .select('product_id')
-        .eq('wishlist_id', wishlist.id);
+        .eq('wishlist_id', defaultWishlistId);
+
+      if (itemsError) throw itemsError;
 
       setWishlistItems(items?.map(item => item.product_id) || []);
     } catch (err) {
       console.error('Error fetching wishlist items:', err);
+      setError('Failed to load wishlist items');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const addToWishlist = async (productId: number) => {
-    if (!user) return;
+    if (!user || !wishlistId) return;
+
+    setIsLoading(true);
+    setError(null);
 
     try {
-      const wishlist = await getOrCreateDefaultWishlist();
-      if (!wishlist) return;
+      // Check if item already exists
+      const { data: existingItem } = await supabase
+        .from('wishlist_items')
+        .select('id')
+        .eq('wishlist_id', wishlistId)
+        .eq('product_id', productId)
+        .maybeSingle();
+
+      if (existingItem) {
+        // Item already in wishlist
+        return;
+      }
 
       const { error } = await supabase
         .from('wishlist_items')
         .insert({
-          wishlist_id: wishlist.id,
+          wishlist_id: wishlistId,
           product_id: productId
         });
 
       if (error) throw error;
+      
+      // Update local state
       setWishlistItems(prev => [...prev, productId]);
     } catch (err) {
       console.error('Error adding to wishlist:', err);
+      setError('Failed to add item to wishlist');
+      throw err;
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const removeFromWishlist = async (productId: number) => {
-    if (!user) return;
+    if (!user || !wishlistId) return;
+
+    setIsLoading(true);
+    setError(null);
 
     try {
-      const wishlist = await getOrCreateDefaultWishlist();
-      if (!wishlist) return;
-
       const { error } = await supabase
         .from('wishlist_items')
         .delete()
-        .eq('wishlist_id', wishlist.id)
+        .eq('wishlist_id', wishlistId)
         .eq('product_id', productId);
 
       if (error) throw error;
+
+      // Update local state
       setWishlistItems(prev => prev.filter(id => id !== productId));
     } catch (err) {
       console.error('Error removing from wishlist:', err);
+      setError('Failed to remove item from wishlist');
+      throw err;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -122,6 +171,8 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         isInWishlist: (productId: number) => wishlistItems.includes(productId),
         addToWishlist,
         removeFromWishlist,
+        isLoading,
+        error
       }}
     >
       {children}

@@ -15,7 +15,6 @@ interface WatchListing {
   price: number;
   location: string;
   images: string[];
-  views: number;
   created_at: string;
 }
 
@@ -35,7 +34,7 @@ const MarketplacePage = () => {
     minCondition: '',
     location: ''
   });
-  const [sortBy, setSortBy] = useState<'newest' | 'price_high' | 'price_low' | 'views'>('newest');
+  const [sortBy, setSortBy] = useState<'newest' | 'price_high' | 'price_low'>('newest');
 
   useEffect(() => {
     fetchListings();
@@ -100,8 +99,6 @@ const MarketplacePage = () => {
         return b.price - a.price;
       case 'price_low':
         return a.price - b.price;
-      case 'views':
-        return b.views - a.views;
       default:
         return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     }
@@ -169,7 +166,6 @@ const MarketplacePage = () => {
             <option value="newest">Newest First</option>
             <option value="price_high">Price: High to Low</option>
             <option value="price_low">Price: Low to High</option>
-            <option value="views">Most Viewed</option>
           </select>
 
           <button
@@ -205,9 +201,6 @@ const MarketplacePage = () => {
                     alt={`${listing.brand} ${listing.model}`}
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                   />
-                  <div className="absolute top-2 right-2 bg-primary-light px-2 py-1 rounded text-sm">
-                    {listing.views} views
-                  </div>
                 </div>
                 <div className="p-4">
                   <h3 className="text-xl font-serif text-white group-hover:text-secondary transition">

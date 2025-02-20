@@ -16,8 +16,8 @@ const Footer = () => {
   return (
     <>
       <footer className="bg-primary-light mt-auto">
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Quick Links */}
             <div>
               <h3 className="text-white font-serif text-lg mb-4">Quick Links</h3>
@@ -115,7 +115,7 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className="mt-12 pt-8 border-t border-gray-dark text-center text-gray-light">
+          <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-dark text-center text-gray-light">
             <p>&copy; {new Date().getFullYear()} Finesse. All rights reserved.</p>
           </div>
         </div>

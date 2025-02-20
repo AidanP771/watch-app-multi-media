@@ -11,9 +11,11 @@ const SignupPage = () => {
   const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [rateLimitCountdown, setRateLimitCountdown] = useState<number | null>(null);
 
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -21,35 +23,74 @@ const SignupPage = () => {
 
   const validatePassword = (password: string) => {
     const errors = [];
-    if (password.length < 6) errors.push('Password must be at least 6 characters long');
+    if (password.length < 8) errors.push('Password must be at least 8 characters long');
     if (!/[A-Z]/.test(password)) errors.push('Include at least one uppercase letter');
     if (!/[a-z]/.test(password)) errors.push('Include at least one lowercase letter');
     if (!/[0-9]/.test(password)) errors.push('Include at least one number');
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) errors.push('Include at least one special character');
     return errors;
+  };
+
+  const startRateLimitCountdown = (seconds: number) => {
+    setRateLimitCountdown(seconds);
+    const interval = setInterval(() => {
+      setRateLimitCountdown(prev => {
+        if (prev === null || prev <= 1) {
+          clearInterval(interval);
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    if (isLoading || rateLimitCountdown !== null) return;
     
-    const passwordErrors = validatePassword(formData.password);
-    if (passwordErrors.length > 0) {
-      setError(passwordErrors.join('. '));
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
+    setError('');
     setIsLoading(true);
 
     try {
-      await signUp(formData.email, formData.password, formData.name);
+      // Validate form data
+      if (!formData.email.trim()) {
+        throw new Error('Please enter your email');
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        throw new Error('Please enter a valid email address');
+      }
+
+      const passwordErrors = validatePassword(formData.password);
+      if (passwordErrors.length > 0) {
+        throw new Error(passwordErrors.join('. '));
+      }
+
+      if (formData.password !== formData.confirmPassword) {
+        throw new Error('Passwords do not match');
+      }
+
+      // Attempt signup
+      const name = [formData.firstName, formData.lastName].filter(Boolean).join(' ');
+      await signUp(formData.email, formData.password, name);
+      
+      // If successful, show success message
       setSuccess(true);
+      setError('');
+
     } catch (err: any) {
-      setError(err.message || 'Failed to create account. Please try again.');
+      console.error('Signup error:', err);
+      
+      // Handle rate limit error
+      if (err.message?.includes('rate limit') || err?.status === 429) {
+        const waitSeconds = parseInt(err.message?.match(/\d+/)?.[0] || '45');
+        startRateLimitCountdown(waitSeconds);
+        setError(`Please wait ${waitSeconds} seconds before trying again`);
+      } else {
+        setError(err.message || 'Failed to create account. Please try again.');
+      }
+      setSuccess(false);
     } finally {
       setIsLoading(false);
     }
@@ -58,6 +99,7 @@ const SignupPage = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    setError(''); // Clear error when user types
   };
 
   if (success) {
@@ -99,20 +141,32 @@ const SignupPage = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="name" className="block text-white mb-2">Full Name</label>
-              <div className="relative">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="firstName" className="block text-white mb-2">First Name</label>
                 <input
                   type="text"
-                  id="name"
-                  name="name"
-                  required
-                  value={formData.name}
+                  id="firstName"
+                  name="firstName"
+                  value={formData.firstName}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-2 rounded bg-primary text-white border border-gray-dark focus:border-secondary outline-none"
-                  placeholder="Enter your full name"
+                  className="w-full px-4 py-2 rounded bg-primary text-white border border-gray-dark focus:border-secondary outline-none"
+                  placeholder="First name"
+                  disabled={isLoading || rateLimitCountdown !== null}
                 />
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-light" />
+              </div>
+              <div>
+                <label htmlFor="lastName" className="block text-white mb-2">Last Name</label>
+                <input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 rounded bg-primary text-white border border-gray-dark focus:border-secondary outline-none"
+                  placeholder="Last name"
+                  disabled={isLoading || rateLimitCountdown !== null}
+                />
               </div>
             </div>
 
@@ -128,6 +182,7 @@ const SignupPage = () => {
                   onChange={handleChange}
                   className="w-full pl-10 pr-4 py-2 rounded bg-primary text-white border border-gray-dark focus:border-secondary outline-none"
                   placeholder="Enter your email"
+                  disabled={isLoading || rateLimitCountdown !== null}
                 />
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-light" />
               </div>
@@ -145,18 +200,20 @@ const SignupPage = () => {
                   onChange={handleChange}
                   className="w-full pl-10 pr-12 py-2 rounded bg-primary text-white border border-gray-dark focus:border-secondary outline-none"
                   placeholder="Create a password"
+                  disabled={isLoading || rateLimitCountdown !== null}
                 />
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-light" />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-light hover:text-white transition"
+                  disabled={isLoading || rateLimitCountdown !== null}
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
               <p className="mt-2 text-sm text-gray-light">
-                Password must be at least 6 characters long and include uppercase, lowercase, and numbers
+                Password must be at least 8 characters long and include uppercase, lowercase, numbers, and special characters
               </p>
             </div>
 
@@ -172,12 +229,14 @@ const SignupPage = () => {
                   onChange={handleChange}
                   className="w-full pl-10 pr-12 py-2 rounded bg-primary text-white border border-gray-dark focus:border-secondary outline-none"
                   placeholder="Confirm your password"
+                  disabled={isLoading || rateLimitCountdown !== null}
                 />
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-light" />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-light hover:text-white transition"
+                  disabled={isLoading || rateLimitCountdown !== null}
                 >
                   {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -186,11 +245,13 @@ const SignupPage = () => {
             
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || rateLimitCountdown !== null}
               className="w-full bg-secondary hover:bg-secondary-light text-primary px-6 py-3 rounded font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
               {isLoading ? (
                 <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+              ) : rateLimitCountdown ? (
+                `Try again in ${rateLimitCountdown}s`
               ) : (
                 'Create Account'
               )}
