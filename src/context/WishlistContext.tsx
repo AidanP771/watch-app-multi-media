@@ -18,57 +18,14 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [wishlistItems, setWishlistItems] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [wishlistId, setWishlistId] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
       fetchWishlistItems();
     } else {
       setWishlistItems([]);
-      setWishlistId(null);
     }
   }, [user]);
-
-  useEffect(() => {
-    if (!user || !wishlistId) return;
-
-    // Subscribe to wishlist changes
-    const subscription = supabase
-      .channel('wishlist_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'wishlist_items',
-          filter: `wishlist_id=eq.${wishlistId}`
-        },
-        () => {
-          fetchWishlistItems();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [user, wishlistId]);
-
-  const getOrCreateDefaultWishlist = async () => {
-    try {
-      // Call the stored function to get or create the default wishlist
-      const { data: result, error: functionError } = await supabase
-        .rpc('get_or_create_default_wishlist', {
-          p_user_id: user!.id
-        });
-
-      if (functionError) throw functionError;
-      return result;
-    } catch (err) {
-      console.error('Error getting/creating default wishlist:', err);
-      throw err;
-    }
-  };
 
   const fetchWishlistItems = async () => {
     if (!user) return;
@@ -78,14 +35,18 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     try {
       // Get or create default wishlist
-      const defaultWishlistId = await getOrCreateDefaultWishlist();
-      setWishlistId(defaultWishlistId);
+      const { data: wishlistId, error: wishlistError } = await supabase
+        .rpc('get_or_create_default_wishlist', {
+          p_user_id: user.id
+        });
+
+      if (wishlistError) throw wishlistError;
 
       // Fetch wishlist items
       const { data: items, error: itemsError } = await supabase
         .from('wishlist_items')
         .select('product_id')
-        .eq('wishlist_id', defaultWishlistId);
+        .eq('wishlist_id', wishlistId);
 
       if (itemsError) throw itemsError;
 
@@ -99,36 +60,43 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const addToWishlist = async (productId: number) => {
-    if (!user || !wishlistId) return;
+    if (!user) return;
 
     setIsLoading(true);
     setError(null);
 
     try {
+      // Get or create default wishlist
+      const { data: wishlistId, error: wishlistError } = await supabase
+        .rpc('get_or_create_default_wishlist', {
+          p_user_id: user.id
+        });
+
+      if (wishlistError) throw wishlistError;
+
       // Check if item already exists
-      const { data: existingItem } = await supabase
+      const { data: existingItems, error: checkError } = await supabase
         .from('wishlist_items')
         .select('id')
         .eq('wishlist_id', wishlistId)
-        .eq('product_id', productId)
-        .maybeSingle();
+        .eq('product_id', productId);
 
-      if (existingItem) {
-        // Item already in wishlist
-        return;
+      if (checkError) throw checkError;
+
+      // Only add if item doesn't exist
+      if (!existingItems?.length) {
+        const { error: insertError } = await supabase
+          .from('wishlist_items')
+          .insert({
+            wishlist_id: wishlistId,
+            product_id: productId
+          });
+
+        if (insertError) throw insertError;
+        
+        // Update local state
+        setWishlistItems(prev => [...prev, productId]);
       }
-
-      const { error } = await supabase
-        .from('wishlist_items')
-        .insert({
-          wishlist_id: wishlistId,
-          product_id: productId
-        });
-
-      if (error) throw error;
-      
-      // Update local state
-      setWishlistItems(prev => [...prev, productId]);
     } catch (err) {
       console.error('Error adding to wishlist:', err);
       setError('Failed to add item to wishlist');
@@ -139,19 +107,27 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const removeFromWishlist = async (productId: number) => {
-    if (!user || !wishlistId) return;
+    if (!user) return;
 
     setIsLoading(true);
     setError(null);
 
     try {
-      const { error } = await supabase
+      // Get default wishlist
+      const { data: wishlistId, error: wishlistError } = await supabase
+        .rpc('get_or_create_default_wishlist', {
+          p_user_id: user.id
+        });
+
+      if (wishlistError) throw wishlistError;
+
+      const { error: deleteError } = await supabase
         .from('wishlist_items')
         .delete()
         .eq('wishlist_id', wishlistId)
         .eq('product_id', productId);
 
-      if (error) throw error;
+      if (deleteError) throw deleteError;
 
       // Update local state
       setWishlistItems(prev => prev.filter(id => id !== productId));

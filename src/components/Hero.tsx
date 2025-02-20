@@ -6,17 +6,9 @@ const Hero = () => {
 
   return (
     <div className="relative h-[60vh] sm:h-[70vh] md:h-[80vh]">
-      <video 
-        autoPlay 
-        muted 
-        loop 
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-      >
-        <source src="/src/assets/vid.mp4" type="video/mp4" />
-      </video>
-      
-      <div className="absolute inset-0 bg-black/50"></div>
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&q=80&w=1920')] bg-cover bg-center">
+        <div className="absolute inset-0 bg-black/50"></div>
+      </div>
       
       <div className="relative h-full flex items-center justify-center px-4">
         <div className="text-center max-w-3xl">
@@ -38,4 +30,4 @@ const Hero = () => {
   );
 };
 
-export default Hero;
+export default Hero

@@ -27,12 +27,13 @@ const LimitedEditionPage = () => {
                     name={watch.name}
                   />
                 ) : (
-                  <div className="relative">
+                  <div className="relative aspect-square">
                     <img 
                       src={watch.image} 
                       alt={watch.name}
-                      className="w-full h-80 object-cover object-center transform group-hover:scale-105 transition duration-500"
+                      className="w-full h-full object-cover object-center transform group-hover:scale-105 transition duration-500"
                     />
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition"></div>
                     <div className="absolute top-4 left-4">
                       <span className="bg-accent px-3 py-1 text-white text-sm font-semibold rounded">Limited</span>
                     </div>

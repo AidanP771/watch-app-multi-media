@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collections } from '../data/collections';
+import WatchCarousel from './WatchCarousel';
 
 const FeaturedProducts = () => {
   const navigate = useNavigate();
@@ -14,6 +15,10 @@ const FeaturedProducts = () => {
     collection: collection.name
   }));
 
+  const artistCollaboration = collections
+    .find(c => c.name === "Limited Edition")
+    ?.watches.find(w => w.name === "Artist Collaboration");
+
   const handleWatchClick = (watchId: number) => {
     navigate(`/shop/${watchId}`);
   };
@@ -25,6 +30,37 @@ const FeaturedProducts = () => {
           Featured Timepieces
         </h2>
         
+        {/* Artist Collaboration Feature */}
+        {artistCollaboration && (
+          <div className="mb-16 cursor-pointer" onClick={() => navigate('/limited-edition')}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="relative">
+                <WatchCarousel 
+                  images={[artistCollaboration.image, ...(artistCollaboration.additionalImages || [])]}
+                  name={artistCollaboration.name}
+                />
+              </div>
+              <div className="flex flex-col justify-center">
+                <p className="text-sm text-secondary-light mb-2">Limited Edition</p>
+                <h3 className="text-2xl font-serif text-white mb-3">{artistCollaboration.name}</h3>
+                <p className="text-gray-light mb-4">{artistCollaboration.subtitle}</p>
+                <p className="text-secondary text-xl mb-4">${artistCollaboration.price.toLocaleString()}</p>
+                <p className="text-gray-light">{artistCollaboration.description}</p>
+                <button
+                  className="mt-6 bg-secondary hover:bg-secondary-light text-primary px-6 py-3 rounded font-semibold transition"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate('/inquiry', { state: { watch: artistCollaboration } });
+                  }}
+                >
+                  Inquire Now
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Regular Featured Products */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {featuredWatches.map((watch) => (
             <div 

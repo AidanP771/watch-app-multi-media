@@ -31,14 +31,14 @@ export const collections = [
         id: 104,
         name: "Heritage Timepiece",
         price: 42000,
-        image: "/src/assets/pexels-pixabay-280250.jpg",
+        image: "https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?auto=format&fit=crop&q=80&w=800",
         description: "Limited edition heritage collection with hand-finished movement",
       },
       {
         id: 105,
         name: "Platinum Elegance",
         price: 55000,
-        image: "/src/assets/pexels-ferarcosn-190819 (1).jpg",
+        image: "https://images.unsplash.com/photo-1539874754764-5a96559165b0?auto=format&fit=crop&q=80&w=800",
         description: "Platinum case with perpetual calendar and moonphase",
       },
     ],
@@ -68,7 +68,7 @@ export const collections = [
         name: "Patek Philippe Celestial",
         price: 95000,
         image:
-          "https://static.patek.com/images/articles/face_white/350/6102P_001_1.jpg",
+          "https://usa.watchpro.com/2021/10/PATEK-PHILIPPE-CELESTIAL-REF.-5102G-001-A-RARE-GOLD-AUTOMATIC-ASTRONOMICAL-WATCH.jpg",
         description: "Astronomical complications with star chart",
       },
     ],
@@ -145,7 +145,8 @@ export const collections = [
         image: "https://cdn4.ethoswatches.com/the-watch-guide/wp-content/uploads/2021/11/Watches-And-Artists05-1.jpg?tr=q-70",
         additionalImages: [
           "https://cdn4.ethoswatches.com/the-watch-guide/wp-content/uploads/2021/11/Watches-And-Artists02-1.jpg?tr=q-70",
-          "https://cdn4.ethoswatches.com/the-watch-guide/wp-content/uploads/2021/11/Watches-And-Artists03-1.jpg?tr=q-70"
+          "https://cdn4.ethoswatches.com/the-watch-guide/wp-content/uploads/2021/11/Watches-And-Artists-3.jpg?tr=q-70",
+          "https://cdn4.ethoswatches.com/the-watch-guide/wp-content/uploads/2021/11/Watches-And-Artists04-1.jpg?tr=q-70"
         ],
         description: "Unique artistic dials created by renowned artists, limited to 25 pieces",
       },
@@ -154,7 +155,7 @@ export const collections = [
         name: "Centennial Tourbillon",
         price: 250000,
         image:
-          "https://img.chrono24.com/images/uhren/38666043-93ql3j6crzpsesah9vvy4dmb-Zoom.jpg",
+          "https://images.unsplash.com/photo-1612817159949-195b6eb9e31a?auto=format&fit=crop&q=80&w=800",
         description: "100th anniversary edition with hand-engraved movement, limited to 100 pieces",
       },
     ],

@@ -18,7 +18,7 @@ const HomePage = () => {
                 playsInline
                 className="w-full h-[400px] object-cover"
               >
-                <source src="/src/assets/vid.mp4" type="video/mp4" />
+                <source src="https://videos.pexels.com/video-files/6827122/6827122-uhd_2560_1440_25fps.mp4" type="video/mp4" />
               </video>
               <div className="absolute inset-0 bg-black/30"></div>
             </div>

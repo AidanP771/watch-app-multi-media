@@ -15,7 +15,7 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({ productId }) => {
 
   const handleToggleWishlist = async () => {
     if (!user) {
-      navigate('/login');
+      navigate('/login', { state: { from: location.pathname } });
       return;
     }
 
@@ -34,7 +34,7 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({ productId }) => {
     <button
       onClick={handleToggleWishlist}
       disabled={isLoading}
-      className={`flex items-center gap-2 px-6 py-3 rounded font-semibold transition ${
+      className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded font-semibold transition ${
         isInWishlist(productId)
           ? 'border border-secondary bg-secondary/10 text-secondary'
           : 'border border-gray-dark hover:border-secondary text-white'
@@ -43,9 +43,11 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({ productId }) => {
       {isLoading ? (
         <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
       ) : (
-        <Heart className={isInWishlist(productId) ? 'fill-secondary' : ''} />
+        <Heart className={`w-5 h-5 ${isInWishlist(productId) ? 'fill-secondary' : ''}`} />
       )}
-      {isInWishlist(productId) ? 'In Wishlist' : 'Add to Wishlist'}
+      <span className="hidden sm:inline">
+        {isInWishlist(productId) ? 'In Wishlist' : 'Add to Wishlist'}
+      </span>
     </button>
   );
 };
